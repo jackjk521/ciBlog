@@ -4,14 +4,15 @@
 
 <div class="post-body">
     <?php echo $post['body']; ?> 
-
 </div>
 
+<?php if($this->session->userdata('user_id') == $post['user_id']): ?>
 <a class="btn btn-warning pull-left" href= " <?php echo site_url('/posts/edit/'.$post['slug']); ?>" > Edit </a> 
 <a href=" <?php echo site_url('/posts/'.$post['slug']); ?>"></a>
 <?php echo form_open('posts/delete/'.$post['id']); ?>
     <input type="submit" value="Delete" class="btn btn-danger"></input>
 </form>
+<?php endif ;?>
 
 <hr>
 <h3>Comments</h3>

@@ -32,6 +32,11 @@ class Posts extends CI_Controller {
     } 
 
     public function create(){
+        // Check Login
+            if(!$this->session->userdata('logged_in')){
+                redirect('users/login');
+            }
+
         $data['title'] = 'Create Post';
         $data['categories'] = $this->post_model->get_categories();
 
@@ -64,16 +69,36 @@ class Posts extends CI_Controller {
                 $post_image = $_FILES['userfile']['name'];
             }
             $this->post_model->create_post($post_image);
+
+             // Set message 
+             $this->session->set_flashdata('post_created', 'Your post has been created');
             redirect('posts');
         } 
     } 
 
     public function delete($id){
+        if(!$this->session->userdata('logged_in')){
+            redirect('users/login');
+        }
+
         $this->post_model->delete_post($id);
+
+        // Set message 
+        $this->session->set_flashdata('post_deleted', 'Your post has been deleted');
         redirect('posts');
     }
     public function edit($slug){
+        if(!$this->session->userdata('logged_in')){
+            redirect('users/login');
+        }
+
         $data['post'] = $this->post_model->get_posts($slug);
+        // Check user
+        if($this->session->userdata('user_id') != $this->post_model->get_posts($slug)['user_id']){
+            redirect('posts');
+        }
+
+
         $data['categories'] = $this->post_model->get_categories();
 
 
@@ -90,7 +115,14 @@ class Posts extends CI_Controller {
     }
 
     public function update(){
+        if(!$this->session->userdata('logged_in')){
+            redirect('users/login');
+        }
+
         $this->post_model->update_post();
+
+        // Set message 
+        $this->session->set_flashdata('post_updated', 'Your post has been updated');
         redirect('posts');
 
     }
